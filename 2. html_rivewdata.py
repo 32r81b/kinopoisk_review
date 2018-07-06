@@ -2,7 +2,7 @@ import requests, time
 from bs4 import BeautifulSoup
 import pandas as pd
 
-movies = pd.read_excel('movies.xlsx')
+movies = pd.read_excel('movies_full.xlsx')
 
 target = []
 movie_link = []
@@ -13,8 +13,16 @@ review_text = []
 
 for i, movie in enumerate(movies.itertuples(), 1):
     movie_url = 'https://www.kinopoisk.ru' + movie.link + 'ord/rating/perpage/75/#list'
-    print(str(i) + " " + movie.name + ": " + movie_url)
-    r = requests.get(movie_url)
+    while True:
+        try:
+            print(str(i) + " " + movie.name + ": " + movie_url)
+            r = requests.get(movie_url)
+        except requests.exceptions.RequestException as e:
+            print(e)
+            time.sleep(10)
+            continue
+        break
+
     soup = BeautifulSoup(r.text, "html.parser")
     review_list = soup.find_all('div', {'class': 'response good', 'class': 'response bad', 'class': 'response'})
 
@@ -35,20 +43,28 @@ for i, movie in enumerate(movies.itertuples(), 1):
 
         review_subtitle.append(review.find('p', {'class': 'sub_title'}).text)
         review_text.append(review.find('span', {'itemprop': 'reviewBody'}).text)
-        print("-" + str(review_details.find('p', {'class': 'profile_name'}).text))
 
-    writer = pd.ExcelWriter('reviews.xlsx', engine='xlsxwriter')
-    reviewDF = pd.DataFrame({'movie_link': movie_link, 'target': target, 'author_id': author_id,
-                             'author_name': author_name, 'review_subtitle': review_subtitle, 'review_text': review_text})
+    if i % 100 == 0:
+        name = 'reviews_' + str(i) + '.xlsx'
+        print('Saving to ' + name)
+        writer = pd.ExcelWriter(name, engine='xlsxwriter')
+        reviewDF = pd.DataFrame({'movie_link': movie_link, 'target': target, 'author_id': author_id,
+                                     'author_name': author_name, 'review_subtitle': review_subtitle, 'review_text': review_text})
+        reviewDF.to_excel(writer, index=False, sheet_name='reviews')
+        workbook = writer.book
+        worksheet = writer.sheets['reviews']
+        header_fmt = workbook.add_format({'bold': True})
+        worksheet.set_row(0, None, header_fmt)
+        writer.save()
 
-    reviewDF.to_excel(writer, index=False, sheet_name='reviews')
-    workbook = writer.book
-    worksheet = writer.sheets['reviews']
-    header_fmt = workbook.add_format({'bold': True})
-    worksheet.set_row(0, None, header_fmt)
-    writer.save()
-
-    time.sleep(5)
-
-
-
+name = 'reviews_full.xlsx'
+print('Saving to ' + name)
+writer = pd.ExcelWriter(name, engine='xlsxwriter')
+reviewDF = pd.DataFrame({'movie_link': movie_link, 'target': target, 'author_id': author_id,
+                                     'author_name': author_name, 'review_subtitle': review_subtitle, 'review_text': review_text})
+reviewDF.to_excel(writer, index=False, sheet_name='reviews')
+workbook = writer.book
+worksheet = writer.sheets['reviews']
+header_fmt = workbook.add_format({'bold': True})
+worksheet.set_row(0, None, header_fmt)
+writer.save()
