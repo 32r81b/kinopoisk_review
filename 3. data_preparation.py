@@ -1,18 +1,11 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import string, re, pymorphy2
-import matplotlib.pyplot as plt
+import re, pymorphy2
 
 print('Start loading reviews_2700.xlsx')
 reviews = pd.read_excel('reviews_2700.xlsx')
 print('Loading finished')
-# #Graphics
-# target_count = reviews.groupby(['target']).movie_link.count()
-# target_count.sort_values(ascending=False, inplace=True)
-# ax = target_count.plot(kind='bar')
-# plt.show()
 
-#movie_link	target	author_id	author_name	review_subtitle	review_text
 morph = pymorphy2.MorphAnalyzer()
 
 def normal_text(text):
@@ -27,19 +20,22 @@ def normal_text(text):
             normal_string.append(p.normal_form)
     return ' '.join(normal_string)
 
-
 normal_review_subtitle =[]
 normal_review_text = []
 
-for i, review_subtitle in reviews.review_subtitle:
+i = 0
+for review_subtitle in reviews.review_subtitle:
     normal_review_subtitle.append(normal_text(review_subtitle))
-    if i % 100 == 0:
-        print('review_subtitle finished ' + str(i) + 'examples')
+    i = i + 1
+    if i % 1000 == 0:
+        print('review_subtitle finished ' + str(i) + ' examples')
 
-for i, review_text in reviews.review_text:
+i = 0
+for review_text in reviews.review_text:
     normal_review_text.append(normal_text(review_text))
-    if i % 100 == 0:
-        print('review_text finished ' + str(i) + 'examples')
+    i = i + 1
+    if i % 1000 == 0:
+        print('review_text finished ' + str(i) + ' examples')
 
 reviews['normal_review_subtitle'] = normal_review_subtitle
 reviews['normal_review_text'] = normal_review_text
