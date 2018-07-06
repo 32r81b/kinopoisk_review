@@ -3,8 +3,9 @@ import pandas as pd
 import string, re, pymorphy2
 import matplotlib.pyplot as plt
 
+print('Start loading reviews_2700.xlsx')
 reviews = pd.read_excel('reviews_2700.xlsx')
-
+print('Loading finished')
 # #Graphics
 # target_count = reviews.groupby(['target']).movie_link.count()
 # target_count.sort_values(ascending=False, inplace=True)
@@ -30,11 +31,15 @@ def normal_text(text):
 normal_review_subtitle =[]
 normal_review_text = []
 
-for review_subtitle in reviews.review_subtitle:
+for i, review_subtitle in reviews.review_subtitle:
     normal_review_subtitle.append(normal_text(review_subtitle))
+    if i % 100 == 0:
+        print('review_subtitle finished ' + str(i) + 'examples')
 
-for review_text in reviews.review_text:
+for i, review_text in reviews.review_text:
     normal_review_text.append(normal_text(review_text))
+    if i % 100 == 0:
+        print('review_text finished ' + str(i) + 'examples')
 
 reviews['normal_review_subtitle'] = normal_review_subtitle
 reviews['normal_review_text'] = normal_review_text
