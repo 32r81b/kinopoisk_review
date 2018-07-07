@@ -48,4 +48,4 @@ review_text_v = BagOfWordText.fit_transform(reviews['normal_review_text'].values
 print('Shape of review_text_v:' + str(review_text_v.shape))
 
 clf = LinearSVC()
-print('cross_val_score:' + str(cross_val_score(clf, review_text_v, valuable_target)))
+print('cross_val_score:' + str(cross_val_score(clf, review_text_v, valuable_target, cv=5)))
