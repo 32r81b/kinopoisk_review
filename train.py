@@ -8,7 +8,7 @@ from sklearn.svm import LinearSVC
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
-reviews = pd.read_excel('reviews_normal_296.xlsx')
+reviews = pd.read_excel('reviews_normal_2700.xlsx')
 
 # print(reviews.target.value_counts(normalize=True))
 
