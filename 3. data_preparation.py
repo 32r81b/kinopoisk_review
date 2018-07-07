@@ -40,8 +40,9 @@ for review_text in reviews.review_text:
 reviews['normal_review_subtitle'] = normal_review_subtitle
 reviews['normal_review_text'] = normal_review_text
 del reviews['review_text']
+del reviews['review_subtitle']
 
-name = 'reviews_normal_2700.xlsx'
+name = 'reviews_normal_full.xlsx'
 
 print('Saving to ' + name)
 writer = pd.ExcelWriter(name, engine='xlsxwriter')
