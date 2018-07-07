@@ -8,7 +8,7 @@ from sklearn.svm import LinearSVC
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
-reviews = pd.read_excel('reviews_100.xlsx')
+reviews = pd.read_excel('reviews_normal_100.xlsx')
 
 # print(reviews.target.value_counts(normalize=True))
 
@@ -35,8 +35,8 @@ for target in reviews.target:
     if target == 'neutral': valuable_target.append(1)
     if target == 'good': valuable_target.append(2)
 
-review_subtitle_v = BagOfWordSubtitle.fit_transform(reviews['review_subtitle'].values.astype('U'))
-review_text_v = BagOfWordText.fit_transform(reviews['review_text'].values.astype('U'))
+review_subtitle_v = BagOfWordSubtitle.fit_transform(reviews['normal_review_subtitle'].values.astype('U'))
+review_text_v = BagOfWordText.fit_transform(reviews['normal_review_text'].values.astype('U'))
 
 # reviews['review_subtitle_v'] = review_subtitle_v
 # reviews['review_text_v'] = review_text_v
