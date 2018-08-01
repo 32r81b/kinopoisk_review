@@ -3,6 +3,7 @@ import pandas as pd
 import re, pymorphy2
 
 print('Start loading reviews_2700.xlsx')
+# reviews = pd.read_excel('reviews_4.xlsx')
 reviews = pd.read_excel('reviews_2700.xlsx')
 print('Loading finished')
 
@@ -11,7 +12,7 @@ morph = pymorphy2.MorphAnalyzer()
 def normal_text(text):
     cleaned_string = re.sub(r'ё', r'е', str(text))
     cleaned_string = re.sub(r'Ё', r'Е', str(cleaned_string))
-    cleaned_string = re.sub(r'[^А-я]', r' ', str(cleaned_string))
+    cleaned_string = re.sub(r'[^А-я0-9]', r' ', str(cleaned_string))
     words = re.split(r' ', cleaned_string)
     normal_string = []
     for word in words:
@@ -22,6 +23,8 @@ def normal_text(text):
 
 normal_review_subtitle =[]
 normal_review_text = []
+normal_review_last_text = []
+normal_review_last_long_text = []
 
 i = 0
 for review_subtitle in reviews.review_subtitle:
@@ -33,12 +36,30 @@ for review_subtitle in reviews.review_subtitle:
 i = 0
 for review_text in reviews.review_text:
     normal_review_text.append(normal_text(review_text))
+    review_text_lines = str.splitlines(str(review_text))
+    length = len(review_text_lines)
+    while True:
+        length = length - 1
+        if len(review_text_lines[length]) > 5 or length == 0:
+            normal_review_last_text.append(normal_text(review_text_lines[length]))
+            break
+
+    length = len(review_text_lines)
+    while True:
+        length = length - 1
+        if len(review_text_lines[length]) > 25 or length == 0:
+            normal_review_last_long_text.append(normal_text(review_text_lines[length]))
+            break
+
     i = i + 1
     if i % 1000 == 0:
         print('review_text finished ' + str(i) + ' examples')
 
 reviews['normal_review_subtitle'] = normal_review_subtitle
 reviews['normal_review_text'] = normal_review_text
+reviews['normal_review_last_text'] = normal_review_last_text
+reviews['normal_review_last_long_text'] = normal_review_last_long_text
+
 del reviews['review_text']
 del reviews['review_subtitle']
 
